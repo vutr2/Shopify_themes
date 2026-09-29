@@ -11,7 +11,7 @@ Do this once per branch. You will end up with two themes in Shopify: one followi
 1. In Shopify admin go to **Online Store → Themes**.
 2. Click **Add theme → Connect from GitHub**.
 3. Sign in to GitHub and authorize the **Shopify GitHub integration** if prompted. Grant it access to this repository (it is private, so it must be selected explicitly).
-4. Choose the account and the repository **`trngsm-shopify-theme`**.
+4. Choose the account and the repository **`Shopify_themes`**.
 5. Choose the branch **`dev`** and click **Connect**. Shopify creates an unpublished theme that follows `dev`.
 6. Repeat steps 2–5 and choose the branch **`main`**. When you are ready to go live, publish the theme that follows `main`.
 7. The theme lives at the repo root, so there is no subfolder to select.
