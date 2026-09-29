@@ -1,0 +1,64 @@
+{%- assign wordmark = section.settings.wordmark_text | default: shop.name -%}
+<footer class="site-footer">
+  <div class="site-footer__cols page-width">
+    {%- if section.settings.menu_1 != blank -%}
+      <nav class="footer-col" aria-label="{{ section.settings.menu_1.title | escape }}">
+        <h2 class="footer-col__title">{% render 'en-label', text: section.settings.menu_1.title %}</h2>
+        {%- for link in section.settings.menu_1.links -%}<a href="{{ link.url }}">{% render 'en-label', text: link.title %}</a>{%- endfor -%}
+      </nav>
+    {%- endif -%}
+    {%- if section.settings.menu_2 != blank -%}
+      <nav class="footer-col" aria-label="{{ section.settings.menu_2.title | escape }}">
+        <h2 class="footer-col__title">{% render 'en-label', text: section.settings.menu_2.title %}</h2>
+        {%- for link in section.settings.menu_2.links -%}<a href="{{ link.url }}">{% render 'en-label', text: link.title %}</a>{%- endfor -%}
+      </nav>
+    {%- endif -%}
+
+    <div class="footer-col footer-col--news">
+      <h2 class="footer-col__title">{{ section.settings.news_heading | escape }}</h2>
+      <p class="footer-col__text">{{ section.settings.news_text | escape }}</p>
+      {%- form 'customer', id: 'FooterNewsletter', class: 'news-form' -%}
+        <input type="hidden" name="contact[tags]" value="newsletter">
+        {%- if form.posted_successfully? -%}
+          <p class="form-ok" role="status">You're on the list. Check your inbox for a welcome email.</p>
+        {%- else -%}
+          <label class="visually-hidden" for="FooterEmail">Email</label>
+          <input id="FooterEmail" type="email" name="contact[email]" required placeholder="you@email.com" autocomplete="email">
+          <button type="submit" class="btn">Sign up</button>
+          {%- if form.errors -%}<p class="form-err" role="alert">Enter a valid email address.</p>{%- endif -%}
+        {%- endif -%}
+      {%- endform -%}
+
+      <ul class="socials">
+        {%- if settings.social_instagram != blank -%}<li><a href="{{ settings.social_instagram }}" rel="noopener" target="_blank">Instagram</a></li>{%- endif -%}
+        {%- if settings.social_tiktok != blank -%}<li><a href="{{ settings.social_tiktok }}" rel="noopener" target="_blank">TikTok</a></li>{%- endif -%}
+        {%- if settings.social_facebook != blank -%}<li><a href="{{ settings.social_facebook }}" rel="noopener" target="_blank">Facebook</a></li>{%- endif -%}
+        {%- if settings.social_youtube != blank -%}<li><a href="{{ settings.social_youtube }}" rel="noopener" target="_blank">YouTube</a></li>{%- endif -%}
+      </ul>
+    </div>
+  </div>
+
+  <div class="site-footer__base page-width">
+    <ul class="pay-icons" aria-label="Payment methods">
+      {%- for type in shop.enabled_payment_types -%}
+        <li>{{ type | payment_type_svg_tag: class: 'pay-icon' }}</li>
+      {%- endfor -%}
+    </ul>
+    <p class="copyright">&copy; {{ 'now' | date: '%Y' }} {{ wordmark }}. {{ powered_by_link }}</p>
+  </div>
+
+  <p class="footer-mark" aria-hidden="true">{{ wordmark }}</p>
+</footer>
+
+{% schema %}
+{
+  "name": "Footer",
+  "settings": [
+    { "type": "text", "id": "wordmark_text", "label": "Wordmark text", "default": "TrngSm" },
+    { "type": "link_list", "id": "menu_1", "label": "Menu 1", "default": "footer" },
+    { "type": "link_list", "id": "menu_2", "label": "Menu 2" },
+    { "type": "text", "id": "news_heading", "label": "Newsletter heading", "default": "Get new drops first" },
+    { "type": "text", "id": "news_text", "label": "Newsletter text", "default": "One email per drop. No spam, unsubscribe anytime." }
+  ]
+}
+{% endschema %}

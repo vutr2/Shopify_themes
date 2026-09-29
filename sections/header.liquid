@@ -1,0 +1,86 @@
+{%- assign wordmark = section.settings.wordmark_text | default: shop.name -%}
+<header class="site-header" data-header>
+  <div class="site-header__inner page-width">
+    <div class="site-header__left">
+      <button class="icon-btn" type="button" aria-label="Open menu" aria-controls="MenuDrawer" aria-expanded="false" data-drawer-open>
+        {% render 'icon', name: 'menu' %}
+      </button>
+      <nav class="site-nav" aria-label="Main">
+        {%- for link in section.settings.menu.links -%}
+          <a href="{{ link.url }}"{% if link.active %} aria-current="page"{% endif %}>{% render 'en-label', text: link.title %}</a>
+        {%- endfor -%}
+      </nav>
+    </div>
+
+    <a class="wordmark" href="{{ routes.root_url }}" style="--logo-w: {{ section.settings.logo_width }}px">
+      {%- if section.settings.logo -%}
+        {{ section.settings.logo | image_url: width: 600 | image_tag: class: 'wordmark__img', alt: wordmark }}
+      {%- else -%}
+        {{ wordmark }}
+      {%- endif -%}
+    </a>
+
+    <div class="site-header__right">
+      <button class="icon-btn" type="button" aria-label="Search" aria-controls="SearchPanel" aria-expanded="false" data-search-toggle>
+        {% render 'icon', name: 'search' %}
+      </button>
+      {%- if shop.customer_accounts_enabled -%}
+        <a class="icon-btn icon-btn--desk" href="{{ routes.account_url }}" aria-label="Account">{% render 'icon', name: 'account' %}</a>
+      {%- endif -%}
+      <a class="icon-btn" href="{{ routes.cart_url }}" aria-label="Cart, {{ cart.item_count }} items" data-cart-link>
+        {% render 'icon', name: 'cart' %}
+        <span class="cart-count" data-cart-count{% if cart.item_count == 0 %} hidden{% endif %}>{{ cart.item_count }}</span>
+      </a>
+    </div>
+  </div>
+
+  <div class="search-panel" id="SearchPanel" hidden>
+    <form action="{{ routes.search_url }}" method="get" role="search" class="search-panel__form page-width">
+      <label class="visually-hidden" for="HeaderSearch">Search products</label>
+      <input id="HeaderSearch" type="search" name="q" placeholder="Search tanks, tees, shorts" autocomplete="off">
+      <input type="hidden" name="type" value="product">
+      <button type="submit" class="btn">Search</button>
+    </form>
+  </div>
+</header>
+
+<div class="drawer" id="MenuDrawer" hidden>
+  <div class="drawer__scrim" data-drawer-close></div>
+  <div class="drawer__panel" role="dialog" aria-modal="true" aria-label="Menu">
+    <div class="drawer__top">
+      <span class="drawer__brand">{{ wordmark }}</span>
+      <button class="icon-btn" type="button" aria-label="Close menu" data-drawer-close>{% render 'icon', name: 'close' %}</button>
+    </div>
+    {%- if section.settings.drawer_menu_1 != blank -%}
+      <nav class="drawer__group" aria-label="{{ section.settings.drawer_menu_1.title | escape }}">
+        {%- for link in section.settings.drawer_menu_1.links -%}
+          <a href="{{ link.url }}" class="drawer__link drawer__link--big">{% render 'en-label', text: link.title %}</a>
+        {%- endfor -%}
+      </nav>
+    {%- endif -%}
+    {%- if section.settings.drawer_menu_2 != blank -%}
+      <nav class="drawer__group" aria-label="{{ section.settings.drawer_menu_2.title | escape }}">
+        {%- for link in section.settings.drawer_menu_2.links -%}
+          <a href="{{ link.url }}" class="drawer__link">{% render 'en-label', text: link.title %}</a>
+        {%- endfor -%}
+      </nav>
+    {%- endif -%}
+    {%- if shop.customer_accounts_enabled -%}
+      <a href="{{ routes.account_url }}" class="drawer__link drawer__account">Account</a>
+    {%- endif -%}
+  </div>
+</div>
+
+{% schema %}
+{
+  "name": "Header",
+  "settings": [
+    { "type": "text", "id": "wordmark_text", "label": "Wordmark text", "default": "TrngSm", "info": "Shown when no logo image is set" },
+    { "type": "image_picker", "id": "logo", "label": "Logo image" },
+    { "type": "range", "id": "logo_width", "label": "Logo width", "min": 60, "max": 260, "step": 10, "unit": "px", "default": 120 },
+    { "type": "link_list", "id": "menu", "label": "Desktop menu", "default": "main-menu" },
+    { "type": "link_list", "id": "drawer_menu_1", "label": "Drawer menu: collections", "default": "main-menu" },
+    { "type": "link_list", "id": "drawer_menu_2", "label": "Drawer menu: categories" }
+  ]
+}
+{% endschema %}

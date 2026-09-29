@@ -1,0 +1,11 @@
+{
+  "sections": {
+    "hero": { "type": "hero-banner", "settings": {} },
+    "new_arrivals": { "type": "featured-collection", "settings": { "heading": "New arrivals", "limit": 8, "columns": "4" } },
+    "tanks": { "type": "featured-collection", "settings": { "heading": "Training tanks", "limit": 8, "columns": "4" } },
+    "editorial": { "type": "editorial", "settings": {} },
+    "tees": { "type": "featured-collection", "settings": { "heading": "Everyday tees", "limit": 4, "columns": "4" } },
+    "lookbook": { "type": "blog-posts", "settings": { "heading": "Lookbook", "limit": "3" } }
+  },
+  "order": ["hero", "new_arrivals", "tanks", "editorial", "tees", "lookbook"]
+}

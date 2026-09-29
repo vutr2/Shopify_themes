@@ -1,0 +1,8 @@
+{
+  "general": {
+    "skip": "Skip to content",
+    "added": "Added to cart",
+    "sold_out": "Sold out",
+    "unavailable": "Unavailable"
+  }
+}

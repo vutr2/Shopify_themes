@@ -1,0 +1,16 @@
+{
+  "sections": {
+    "main": {
+      "type": "main-product",
+      "blocks": {
+        "p1": { "type": "perk", "settings": { "text": "<strong>Printed to order</strong> for you, ships in 3–5 business days" } },
+        "p2": { "type": "perk", "settings": { "text": "<strong>Free US shipping</strong> on orders over $75" } },
+        "p3": { "type": "perk", "settings": { "text": "<strong>Easy returns</strong> on misprints and damaged items within 30 days" } }
+      },
+      "block_order": ["p1", "p2", "p3"],
+      "settings": {}
+    },
+    "related": { "type": "featured-collection", "settings": { "heading": "You might also like", "limit": 4, "columns": "4" } }
+  },
+  "order": ["main", "related"]
+}

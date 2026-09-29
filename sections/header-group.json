@@ -1,0 +1,9 @@
+{
+  "type": "header",
+  "name": "Header group",
+  "sections": {
+    "announcement": { "type": "announcement-bar", "settings": { "text": "Free US shipping on orders over $75" } },
+    "header": { "type": "header", "settings": { "wordmark_text": "TrngSm" } }
+  },
+  "order": ["announcement", "header"]
+}

@@ -1,0 +1,29 @@
+{%- comment -%}
+  Translates common Vietnamese default Shopify labels (menus, pages, collections, blogs) to English.
+  Usage: {% render 'en-label', text: link.title %}
+  Anything not in the list is printed unchanged. Add your own pairs below.
+{%- endcomment -%}
+{%- assign key = text | strip | downcase -%}
+{%- case key -%}
+  {%- when 'trang chủ', 'trang chu' -%}Home
+  {%- when 'danh mục', 'danh muc', 'danh mục sản phẩm', 'cửa hàng', 'shop' -%}Shop
+  {%- when 'tất cả sản phẩm', 'tat ca san pham', 'sản phẩm' -%}All products
+  {%- when 'sản phẩm mới', 'hàng mới về', 'mới về' -%}New arrivals
+  {%- when 'bộ sưu tập', 'các bộ sưu tập' -%}Collections
+  {%- when 'trang nổi bật', 'nổi bật' -%}Featured
+  {%- when 'liên hệ', 'lien he', 'liên hệ với chúng tôi' -%}Contact
+  {%- when 'giới thiệu', 'gioi thieu', 'về chúng tôi' -%}About us
+  {%- when 'tin tức', 'tin tuc', 'blog' -%}Blog
+  {%- when 'tìm kiếm', 'tim kiem' -%}Search
+  {%- when 'câu hỏi thường gặp', 'hỏi đáp' -%}FAQ
+  {%- when 'hướng dẫn chọn size', 'bảng size', 'bảng kích thước' -%}Size guide
+  {%- when 'tra cứu đơn hàng', 'theo dõi đơn hàng' -%}Track your order
+  {%- when 'chính sách hoàn tiền', 'chính sách đổi trả', 'chính sách trả hàng' -%}Refund policy
+  {%- when 'chính sách bảo mật', 'chính sách quyền riêng tư', 'chính sách bảo mật thông tin' -%}Privacy policy
+  {%- when 'điều khoản dịch vụ', 'điều khoản sử dụng' -%}Terms of service
+  {%- when 'chính sách vận chuyển', 'chính sách giao hàng', 'chính sách giao nhận' -%}Shipping policy
+  {%- when 'thông tin liên hệ' -%}Contact information
+  {%- when 'chân trang', 'menu chân trang' -%}Help
+  {%- when 'menu chính' -%}Menu
+  {%- else -%}{{ text }}
+{%- endcase -%}

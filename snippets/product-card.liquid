@@ -1,0 +1,65 @@
+{%- comment -%}
+  Accepts: card_product (product object, optional), index (for placeholder)
+{%- endcomment -%}
+{%- if card_product -%}
+  {%- liquid
+    assign p = card_product
+    assign pct = 0
+    if p.compare_at_price > p.price
+      assign pct = p.compare_at_price | minus: p.price | times: 100 | divided_by: p.compare_at_price
+    endif
+    assign img_alt = p.featured_media.alt | default: p.title | escape
+  -%}
+  <article class="card">
+    <a class="card__media" href="{{ p.url }}" tabindex="-1" aria-hidden="true">
+      {%- if p.featured_media -%}
+        {{ p.featured_media | image_url: width: 800 | image_tag: loading: 'lazy', widths: '360, 540, 720, 800', sizes: '(min-width: 990px) 25vw, 50vw', class: 'card__img', alt: img_alt }}
+        {%- if p.media[1] and p.media[1].media_type == 'image' -%}
+          {{ p.media[1] | image_url: width: 800 | image_tag: loading: 'lazy', widths: '360, 540, 720, 800', sizes: '(min-width: 990px) 25vw, 50vw', class: 'card__img card__img--alt', alt: '' }}
+        {%- endif -%}
+      {%- else -%}
+        {{ 'product-1' | placeholder_svg_tag: 'placeholder' }}
+      {%- endif -%}
+      {%- unless p.available -%}
+        <span class="badge badge--muted">Sold out</span>
+      {%- else -%}
+        {%- if pct > 0 -%}<span class="badge">-{{ pct }}%</span>{%- endif -%}
+      {%- endunless -%}
+    </a>
+
+    {%- for option in p.options_with_values -%}
+      {%- assign oname = option.name | downcase -%}
+      {%- if oname == 'color' or oname == 'colour' or oname == 'màu' or oname == 'màu sắc' -%}
+        <ul class="swatches" aria-label="{{ option.values.size }} colors">
+          {%- for value in option.values limit: 5 -%}
+            <li title="{{ value | escape }}">
+              {%- if value.swatch.color -%}
+                <span class="swatch" style="background: {{ value.swatch.color }}"></span>
+              {%- elsif value.variant.featured_media -%}
+                {{ value.variant.featured_media | image_url: width: 64, height: 64, crop: 'center' | image_tag: class: 'swatch swatch--img', alt: '', loading: 'lazy' }}
+              {%- else -%}
+                <span class="swatch swatch--text">{{ value | slice: 0 }}</span>
+              {%- endif -%}
+              <span class="visually-hidden">{{ value }}</span>
+            </li>
+          {%- endfor -%}
+          {%- if option.values.size > 5 -%}
+            <li class="swatches__more">+{{ option.values.size | minus: 5 }}</li>
+          {%- endif -%}
+        </ul>
+      {%- endif -%}
+    {%- endfor -%}
+
+    <h3 class="card__title"><a href="{{ p.url }}">{{ p.title }}</a></h3>
+    {% render 'price', product: p %}
+  </article>
+{%- else -%}
+  <article class="card card--placeholder">
+    <div class="card__media">
+      {%- assign ph = index | modulo: 6 | plus: 1 -%}
+      {{ 'product-' | append: ph | placeholder_svg_tag: 'placeholder' }}
+    </div>
+    <h3 class="card__title">Your product name</h3>
+    <div class="price"><span class="price__now">{{ 3500 | money }}</span></div>
+  </article>
+{%- endif -%}

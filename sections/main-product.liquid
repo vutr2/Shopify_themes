@@ -1,0 +1,136 @@
+{%- liquid
+  assign current = product.selected_or_first_available_variant
+  assign form_id = 'ProductForm-' | append: section.id
+  assign pct = 0
+  if current.compare_at_price > current.price
+    assign pct = current.compare_at_price | minus: current.price | times: 100 | divided_by: current.compare_at_price
+  endif
+-%}
+<section class="product page-width" data-product-section data-section="{{ section.id }}">
+  <div class="product__gallery" data-gallery>
+    {%- for media in product.media -%}
+      <div class="product__media{% if media.id == current.featured_media.id %} is-active{% endif %}" data-media-id="{{ media.id }}">
+        {%- case media.media_type -%}
+          {%- when 'image' -%}
+            {%- assign m_alt = media.alt | default: product.title | escape -%}
+            {%- if forloop.first -%}
+              {{ media | image_url: width: 1400 | image_tag: widths: '600, 900, 1200, 1400', sizes: '(min-width: 990px) 58vw, 100vw', alt: m_alt, fetchpriority: 'high' }}
+            {%- else -%}
+              {{ media | image_url: width: 1400 | image_tag: widths: '600, 900, 1200, 1400', sizes: '(min-width: 990px) 58vw, 100vw', alt: m_alt, loading: 'lazy' }}
+            {%- endif -%}
+          {%- else -%}
+            {{ media | media_tag }}
+        {%- endcase -%}
+      </div>
+    {%- else -%}
+      <div class="product__media">{{ 'product-1' | placeholder_svg_tag: 'placeholder' }}</div>
+    {%- endfor -%}
+  </div>
+
+  <div class="product__info">
+    <div class="product__sticky">
+      <h1 class="product__title">{{ product.title }}</h1>
+
+      <div class="price price--lg" data-price>
+        <span class="price__now" data-price-now>{{ current.price | money }}</span>
+        <s class="price__was" data-price-was{% unless current.compare_at_price > current.price %} hidden{% endunless %}>{{ current.compare_at_price | money }}</s>
+        <span class="badge badge--inline" data-price-pct{% if pct == 0 %} hidden{% endif %}>-{{ pct }}%</span>
+      </div>
+
+      {%- form 'product', product, id: form_id, class: 'product-form', novalidate: 'novalidate' -%}
+        <input type="hidden" name="id" value="{{ current.id }}" data-variant-id>
+
+        {%- unless product.has_only_default_variant -%}
+          {%- for option in product.options_with_values -%}
+            {%- assign opt_i = forloop.index0 -%}
+            <fieldset class="opt" data-option-index="{{ opt_i }}">
+              <legend class="opt__legend">{{ option.name }}: <span data-opt-label>{{ option.selected_value }}</span></legend>
+              <div class="opt__values">
+                {%- for value in option.values -%}
+                  {%- assign input_id = section.id | append: '-' | append: opt_i | append: '-' | append: forloop.index0 -%}
+                  <input class="visually-hidden" type="radio" id="{{ input_id }}" name="{{ section.id }}-option-{{ opt_i }}" form="none"
+                    value="{{ value | escape }}"{% if option.selected_value == value %} checked{% endif %}>
+                  <label class="chip" for="{{ input_id }}">
+                    {%- if value.swatch.color -%}<span class="chip__dot" style="background: {{ value.swatch.color }}"></span>{%- endif -%}
+                    {{ value }}
+                  </label>
+                {%- endfor -%}
+              </div>
+            </fieldset>
+          {%- endfor -%}
+        {%- endunless -%}
+
+        <div class="qty">
+          <label for="Qty-{{ section.id }}" class="opt__legend">Quantity</label>
+          <div class="qty__box">
+            <button type="button" class="qty__btn" data-qty="-1" aria-label="Decrease quantity">&minus;</button>
+            <input id="Qty-{{ section.id }}" type="number" name="quantity" value="1" min="1" inputmode="numeric">
+            <button type="button" class="qty__btn" data-qty="1" aria-label="Increase quantity">+</button>
+          </div>
+        </div>
+
+        <div class="product-form__buttons">
+          <button type="submit" name="add" class="btn btn--block" data-add-btn{% unless current.available %} disabled{% endunless %}>
+            {%- if current.available -%}Add to cart{%- else -%}Sold out{%- endif -%}
+          </button>
+          {{ form | payment_button }}
+        </div>
+        <p class="form-err" role="alert" data-form-error hidden></p>
+      {%- endform -%}
+
+      <ul class="perks">
+        {%- for block in section.blocks -%}
+          <li class="perks__item" {{ block.shopify_attributes }}>{{ block.settings.text }}</li>
+        {%- endfor -%}
+      </ul>
+
+      {%- if product.description != blank -%}
+        <details class="accordion" open>
+          <summary>Description</summary>
+          <div class="rte">{{ product.description }}</div>
+        </details>
+      {%- endif -%}
+      {%- if section.settings.size_page != blank -%}
+        <details class="accordion">
+          <summary>{{ section.settings.size_page.title }}</summary>
+          <div class="rte">{{ section.settings.size_page.content }}</div>
+        </details>
+      {%- endif -%}
+    </div>
+  </div>
+
+  <script type="application/json" data-product-json>
+    [
+      {%- for v in product.variants -%}
+        {
+          "id": {{ v.id }},
+          "options": {{ v.options | json }},
+          "available": {{ v.available | json }},
+          "price": {{ v.price | money | json }},
+          "compare": {% if v.compare_at_price > v.price %}{{ v.compare_at_price | money | json }}{% else %}null{% endif %},
+          "pct": {% if v.compare_at_price > v.price %}{{ v.compare_at_price | minus: v.price | times: 100 | divided_by: v.compare_at_price }}{% else %}0{% endif %},
+          "media": {% if v.featured_media %}{{ v.featured_media.id }}{% else %}null{% endif %}
+        }{% unless forloop.last %},{% endunless %}
+      {%- endfor -%}
+    ]
+  </script>
+</section>
+
+{% schema %}
+{
+  "name": "Product",
+  "settings": [
+    { "type": "page", "id": "size_page", "label": "Size guide page", "info": "Shown as a collapsible tab" }
+  ],
+  "blocks": [
+    {
+      "type": "perk",
+      "name": "Perk line",
+      "settings": [
+        { "type": "inline_richtext", "id": "text", "label": "Text", "default": "<strong>Free shipping</strong> over $75" }
+      ]
+    }
+  ],
+  "presets": [{ "name": "Product" }]
+}
+{% endschema %}
